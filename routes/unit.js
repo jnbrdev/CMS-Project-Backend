@@ -71,10 +71,16 @@ router.post("/addUnit", async (req, res) => {
 });
 
 // Update Unit
-router.put("/updateUnit/:id", async (req, res) => {
-  let id = req.params.id;
-  const updateUnit = await Unit.update(req.body, { where: { id: id } });
+router.put("/updateUnit/:unitNo", async (req, res) => {
+  
+  try {
+    const unit_no = req.params.unitNo;
+  const updateUnit = await Unit.update(req.body, { where: { unit_no: unit_no } });
   res.json(updateUnit);
+  
+  } catch (error) {
+    res.json(error)
+  }
 });
 
 // Delete Unit

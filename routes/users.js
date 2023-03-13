@@ -25,7 +25,6 @@ router.get("/getOneUser/:id", async (req, res) => {
 // Add User
 router.post("/addUser", async (req, res) => {
   const {
-    unit_id,
     email,
     password,
     full_name,
@@ -47,7 +46,6 @@ router.post("/addUser", async (req, res) => {
     }
 
     const postUser = new Users({
-      unit_id,
       email,
       password: encryptedPassword,
       full_name,
