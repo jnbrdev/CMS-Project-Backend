@@ -26,6 +26,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    meter_no: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    cur_read: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     status: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -34,5 +42,6 @@ module.exports = (sequelize, DataTypes) => {
   Unit.associate = function(models) {
     Unit.belongsTo(models.Users);
   };
+ // sequelize.sync({alter: true})
   return Unit;
 };
