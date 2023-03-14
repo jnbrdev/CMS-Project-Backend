@@ -3,7 +3,7 @@ const router = express.Router();
 const { Users } = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-// Add Unit
+// Login API
 router.post("/loginUser", async (req, res) => {
   const { email, password, role } = req.body;
 
@@ -24,19 +24,30 @@ router.post("/loginUser", async (req, res) => {
         id: loginUserWithEmail.id,
         email: loginUserWithEmail.email,
         role: loginUserWithEmail.role,
-        expiresIn: 300,
+        expiresIn: '1h',
       },
       process.env.JWT_SECRET
     );
+
+    const refToken = jwt.sign(
+      {
+        email: loginUserWithEmail.email,
+        expiresIn: '1d',
+      },
+      process.env.JWT_SECRET_REFRESH
+    );
+    const roles = Object.values(loginUserWithEmail.role).filter(Boolean)
+    res.cookie('jwt', refToken, {httpOnly: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000})
     res.json({
       message: "Login Successfully!",
       email: email,
-      role: loginUserWithEmail.role,
+      role: roles,
       status: loginUserWithEmail.status,
-      token: jwtToken,
+      accessToken: jwtToken,
+      refreshToken: refToken,
     });
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 });
 
