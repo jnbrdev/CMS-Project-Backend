@@ -24,20 +24,25 @@ router.post("/loginUser", async (req, res) => {
         id: loginUserWithEmail.id,
         email: loginUserWithEmail.email,
         role: loginUserWithEmail.role,
-        expiresIn: '1h',
+        expiresIn: "1h",
       },
       process.env.JWT_SECRET
     );
-      //
+    //
     const refToken = jwt.sign(
       {
         email: loginUserWithEmail.email,
-        expiresIn: '1d',
+        expiresIn: "1d",
       },
       process.env.JWT_SECRET_REFRESH
     );
-    const roles = Object.values(loginUserWithEmail.role).filter(Boolean)
-    res.cookie('jwt', refToken, {httpOnly: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000})
+
+    const roles = Object.values(loginUserWithEmail.role);
+    res.cookie("jwt", refToken, {
+      httpOnly: true,
+      sameSite: "None",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
     res.json({
       message: "Login Successfully!",
       email: email,
@@ -47,7 +52,7 @@ router.post("/loginUser", async (req, res) => {
       refreshToken: refToken,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 });
 
