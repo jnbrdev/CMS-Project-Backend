@@ -42,9 +42,8 @@ router.post("/addUser", async (req, res) => {
     );
 
     if (alreadyExistUser) {
-      return res.json({ message: "User with email already exists! " });
+      return res.json({ message: "User with this email already exists! " });
     }
-
     const postUser = new Users({
       email,
       password: encryptedPassword,
