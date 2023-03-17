@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Users } = require("../models");
 const bcrypt = require("bcryptjs");
+const { Sequelize } = require('sequelize');
 // Get All Users
 router.get("/getAllUser", async (req, res) => {
   const listOfUsers = await Users.findAll();
@@ -40,23 +41,38 @@ router.post("/addUser", async (req, res) => {
         console.log(err);
       }
     );
-
     if (alreadyExistUser) {
       return res.json({ message: "User with this email already exists! " });
     }
-    const postUser = new Users({
-      email,
-      password: encryptedPassword,
-      full_name,
-      contact_no,
-      birthdate,
-      role,
-      status,
+
+    // Fetch the last invoice number from the database
+    const lastUser = await Users.findOne({
+      order: [["createdAt", "DESC"]],
     });
-    await postUser.save();
-    res.json({message: "Added Succesfully"});
-    console.log(postUser);
-  } catch (err) {}
+    let lastInvoiceNumber = lastUser ? parseInt(lastUser.invoice_no.slice(3), 10) : 0;
+    lastInvoiceNumber++; // Increment the invoice number
+    const formattedInvoiceNumber = `INV${lastInvoiceNumber.toString().padStart(3, "0")}`;
+
+//Save user
+      const postUser = new Users({
+        email,
+        password: encryptedPassword,
+        full_name,
+        contact_no,
+        birthdate,
+        role,
+        status,
+        invoice_no: formattedInvoiceNumber,
+      });
+      
+      await postUser.save();
+      res.json({message: "Added Succesfully"});
+      console.log(postUser);
+     
+
+    
+    
+  } catch (err) {console.log(err)}
 });
 
 //Login User

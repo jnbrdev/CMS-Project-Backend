@@ -4,6 +4,10 @@ module.exports
 
 module.exports = (sequelize, DataTypes) => {
   const Users = sequelize.define("Users", {
+    invoice_no: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -36,6 +40,7 @@ module.exports = (sequelize, DataTypes) => {
   Users.associate = function(models) {
     Users.hasMany(models.Unit,{foreignKey: 'userId'});
   };
+  //sequelize.sync({alter: true})
   
   return Users;
 };
