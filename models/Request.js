@@ -2,39 +2,31 @@ const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
 
-    const Users = sequelize.define("Users", {
-        email: {
+    const Request = sequelize.define("Request", {
+        unit_no: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        unit_id: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        first_name: {
+        req_by: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        last_name: {
+        req_title: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        contact_no: {
+        req_body: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        birthdate: {
+        req_date: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        role: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        status: {
+        req_status: {
             type: DataTypes.STRING,
             allowNull: false,
         },
     })
-    return Users
+    return Request
 }

@@ -34,6 +34,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    assocBillTo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    waterBillTo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     status: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -42,6 +50,6 @@ module.exports = (sequelize, DataTypes) => {
   Unit.associate = function(models) {
     Unit.belongsTo(models.Users);
   };
- // sequelize.sync({alter: true})
+ //sequelize.sync({alter: true})
   return Unit;
 };

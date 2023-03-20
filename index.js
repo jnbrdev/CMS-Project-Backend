@@ -18,11 +18,17 @@ const db = require("./models");
 const userRouter = require("./routes/users");
 const unitRouter = require("./routes/unit");
 const loginRouter = require("./routes/login");
+const requestRouter = require("./routes/request");
+const serviceRouter = require("./routes/service");
+const invoiceRouter = require("./routes/invoice");
 
 // Middleware
 app.use("/users", userRouter);
 app.use("/unit", unitRouter);
 app.use("/login", loginRouter);
+app.use("/req", requestRouter);
+app.use("/service", serviceRouter);
+app.use("/invoice", invoiceRouter);
 
 db.sequelize.sync().then(() => {
   app.listen(3003, () => {
