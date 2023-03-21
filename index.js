@@ -21,6 +21,7 @@ const loginRouter = require("./routes/login");
 const requestRouter = require("./routes/request");
 const serviceRouter = require("./routes/service");
 const invoiceRouter = require("./routes/invoice");
+const rateRouter = require("./routes/rate");
 
 // Middleware
 app.use("/users", userRouter);
@@ -29,6 +30,7 @@ app.use("/login", loginRouter);
 app.use("/req", requestRouter);
 app.use("/service", serviceRouter);
 app.use("/invoice", invoiceRouter);
+app.use("/rate", rateRouter);
 
 db.sequelize.sync().then(() => {
   app.listen(3003, () => {

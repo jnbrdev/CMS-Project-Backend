@@ -1,14 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const { WaterBill, Invoice, AssocDue, Unit, Users } = require("../models");
+const { WaterBill, Invoice, AssocDue, Unit, Users, Rate } = require("../models");
 
 
 
 
 // Get Data Unit
-router.get("/getUnit/:unit_no", async (req, res) => {
+router.post("/getUnitRateData/:unit_no", async (req, res) => {
     const unitNum = req.params.unit_no;
-    let userFullNameWaterBill, userInvoiceWaterBill, userFullNameAssocDue, userInvoiceAssocDue, unitSize, unitMeter, prevReading;
+    let userFullNameWaterBill, 
+        userInvoiceWaterBill, 
+        userFullNameAssocDue, 
+        userInvoiceAssocDue, 
+        unitSize, unitMeter, prevReading,
+        ratePerSqm, ratePerCubic, assocDueRate, discountRate, penaltyRate;
     
     try { 
       //Get Water Bill To
@@ -44,7 +49,7 @@ router.get("/getUnit/:unit_no", async (req, res) => {
       }
       userFullNameAssocDue = unitAssoc.assocBillTo; // assign the user id data to the userID variable
 
-      //Get Invoice Number of Water Bill Payer
+      //Get Invoice Number of AssocDue Bill Payer
       const userAssocDueInvoice = await Users.findOne({
         where: { full_name: userFullNameAssocDue },
         attributes: ['invoice_no']
@@ -69,6 +74,20 @@ router.get("/getUnit/:unit_no", async (req, res) => {
       } else {
         // handle case where no unit information was found
       }
+
+      //Get all Rate Info
+      const rateInformation = await Rate.findAll();
+      if (rateInformation.length > 0) {
+        const rateData = rateInformation[0];
+        ratePerSqm = rateData.ratePerSqm;
+        discountRate = rateData.discountRate;
+        ratePerCubic = rateData.ratePerCubic;
+        penaltyRate = rateData.penaltyRate;
+        assocDueRate = rateData.assocDueRate;
+        console.error(unitMeter);
+      } else {
+        // handle case where no unit information was found
+      }
       
     console.error(unitMeter);
     } catch (err) {
@@ -76,14 +95,19 @@ router.get("/getUnit/:unit_no", async (req, res) => {
       return res.status(500).send('An error occurred while retrieving user data');
     }
     res.json({
+        unit_num: unitNum,
         waterBillTo: userFullNameWaterBill, 
         invoiceWaterBillTo: userInvoiceWaterBill, 
         assocBillTo: userFullNameAssocDue,
         invoiceAssocBillTo: userInvoiceAssocDue,
         unit_size: unitSize,
         meter_no: unitMeter,
-        previous_reading: prevReading,   
-        
+        previous_reading: prevReading,
+        ratePerSqm: ratePerSqm,
+        discountRate: discountRate,
+        ratePerCubic: ratePerCubic,
+        penaltyRate: penaltyRate,
+        assocDueRate: assocDueRate,  
     });
       
   });

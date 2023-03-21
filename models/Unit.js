@@ -47,9 +47,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
   });
-  Unit.associate = function(models) {
-    Unit.belongsTo(models.Users);
-  };
+  
  //sequelize.sync({alter: true})
   return Unit;
 };
