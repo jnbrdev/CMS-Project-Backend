@@ -8,14 +8,27 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    invoice_no: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    billed_to: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     amount: {
-        type: DataTypes.DECIMAL(10,2),
-        allowNull: false,
-      },
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: false,
+    },
+    due_date: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
   });
   AssocDue.associate = function(models) {
     AssocDue.hasMany(models.Invoice,{foreignKey: 'assocdue_id'});
   };
-  
+  //sequelize.sync({alter: true})
+
   return AssocDue;   
 };

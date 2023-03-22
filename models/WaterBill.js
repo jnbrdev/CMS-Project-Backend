@@ -8,6 +8,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    invoice_no: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    billed_to: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     prev_read: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -19,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
     reading_date: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      due_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
       },
     amount: {
         type: DataTypes.DECIMAL(10,2),

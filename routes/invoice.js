@@ -112,6 +112,66 @@ router.post("/getUnitRateData/:unit_no", async (req, res) => {
       
   });
 
+// Add Water Bill and Association Due
+router.post("/addBill", async (req, res) => {
+  const {  unit_num,
+    waterBillTo,
+    invoiceWaterBillTo,
+    assocBillTo,
+    invoiceAssocBillTo,
+    unit_size,
+    meter_no,
+    previous_reading,
+    cur_read,
+    ratePerSqm,
+    discountRate,
+    ratePerCubic,
+    penaltyRate,
+    assocDueRate,
+    waterBillTotal,
+    assocDueTotal,
+    reading_date} = req.body;
+  try {
+    const today = new Date(); // Today's date
+    const thirtyDaysFromNow = new Date(today.getTime() + (30 * 24 * 60 * 60 * 1000)); // Date 30 days from now
 
+    const todayFormatted = today.toISOString().slice(0, 10);
+    const thirtyDaysFromNowFormatted = thirtyDaysFromNow.toISOString().slice(0, 10);
+  
+    const postWaterBill = new WaterBill({
+      unit_no: unit_num,
+      prev_read: previous_reading,
+      cur_read: cur_read,
+      reading_date: reading_date,
+      amount: waterBillTotal,
+      invoice_no: invoiceWaterBillTo,
+      billed_to: waterBillTo,
+      due_date: thirtyDaysFromNowFormatted
+    });
+    const postAssocDue = new AssocDue({
+      unit_no: unit_num,
+      amount: assocDueTotal,
+      invoice_no: invoiceAssocBillTo,
+      billed_to: assocBillTo,
+      due_date: thirtyDaysFromNowFormatted
+    })
+    await postWaterBill.save();
+    await postAssocDue.save();
+    res.json({ message: "Service Added Succesfully" });
+    console.log(postAssocDue);
+    console.log(postWaterBill);
+  } catch (err) {console.log(err)}
+});
 
+// Get All WaterBill
+router.post("/getAllWaterBill", async (req, res) => {
+  const listOfWaterBill = await WaterBill.findAll();
+  res.json(listOfWaterBill);
+});
+
+// Get All Association Due
+router.post("/getAllAssocDue", async (req, res) => {
+  const listOfAssocDue = await AssocDue.findAll();
+  res.json(listOfAssocDue);
+});
 module.exports = router;
