@@ -74,7 +74,7 @@ router.post("/getUnitRateData/:unit_no", async (req, res) => {
       } else {
         // handle case where no unit information was found
       }
-
+      
       //Get all Rate Info
       const rateInformation = await Rate.findAll();
       if (rateInformation.length > 0) {

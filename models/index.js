@@ -1,6 +1,5 @@
 'use strict';
-const Users = require('../models/Users')
-const Unit = require('../models/Unit')
+
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
