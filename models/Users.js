@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 const Unit = require("../models/Unit");
+const SecurityShift = require("../models/SecurityShift");
 module.exports  
 
 module.exports = (sequelize, DataTypes) => {
@@ -39,7 +40,9 @@ module.exports = (sequelize, DataTypes) => {
   });
   Users.associate = function(models) {
     Users.hasMany(models.Unit,{foreignKey: 'userId'});
+    //Users.hasMany(models.SecurityShift,{foreignKey: 'user_id'});
   };
+  
   //sequelize.sync({alter: true})
   
   return Users;
