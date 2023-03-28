@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const Unit = require("../models/Unit");
-const SecurityShift = require("../models/SecurityShift");
+
 module.exports  
 
 module.exports = (sequelize, DataTypes) => {
