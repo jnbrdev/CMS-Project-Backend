@@ -42,6 +42,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    occupants: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    main_tenant: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     status: {
       type: DataTypes.STRING,
       allowNull: false,

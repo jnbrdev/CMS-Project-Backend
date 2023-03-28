@@ -21,6 +21,24 @@ router.get("/getAllUser", async (req, res) => {
   res.json(getAllUser);
 });
 
+//Get Users
+router.get('/getUnitOwnerDetails', async (req, res) => {
+  const { search } = req.query;
+  try {
+    const users = await Users.findAll({
+      where: {
+        full_name: {
+          [Op.like]: `%${search}%`,
+        },
+      },
+    });
+    res.status(200).json(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Internal server error');
+  }
+});
+
 // Get Active User
 router.get("/getActiveUser", async (req, res) => {
   const getActiveUser = await Users.findAll({
