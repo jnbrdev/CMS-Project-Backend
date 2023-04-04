@@ -34,7 +34,7 @@ router.post("/getUnitRateData/:unit_no", async (req, res) => {
       });
   
       if (!userWaterBillInvoice) {
-        return res.status(404).send('User not found');
+        return res.status(404).send('sUser not found');
       }
       userInvoiceWaterBill = userWaterBillInvoice.invoice_no //Assign the user invoice number to the userInvoice variable
 
@@ -45,7 +45,7 @@ router.post("/getUnitRateData/:unit_no", async (req, res) => {
       });
   
       if (!unitAssoc) {
-        return res.status(404).send('User not found');
+        return res.status(404).send('assocUser not found');
       }
       userFullNameAssocDue = unitAssoc.assocBillTo; // assign the user id data to the userID variable
 
@@ -56,7 +56,7 @@ router.post("/getUnitRateData/:unit_no", async (req, res) => {
       });
   
       if (!userWaterBillInvoice) {
-        return res.status(404).send('User not found');
+        return res.status(404).send('assocUser not found');
       }
       userInvoiceAssocDue = userAssocDueInvoice.invoice_no //Assign the user invoice number to the userInvoice variable
 
