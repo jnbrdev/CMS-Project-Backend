@@ -4,7 +4,6 @@ const { WaterBill, Invoice, AssocDue, Unit, Users, Rate } = require("../models")
 
 
 
-
 // Get Data Unit
 router.post("/getUnitRateData/:unit_no", async (req, res) => {
     const unitNum = req.params.unit_no;
@@ -119,15 +118,8 @@ router.post("/addBill", async (req, res) => {
     invoiceWaterBillTo,
     assocBillTo,
     invoiceAssocBillTo,
-    unit_size,
-    meter_no,
     previous_reading,
     cur_read,
-    ratePerSqm,
-    discountRate,
-    ratePerCubic,
-    penaltyRate,
-    assocDueRate,
     waterBillTotal,
     assocDueTotal,
     reading_date} = req.body;
@@ -155,8 +147,21 @@ router.post("/addBill", async (req, res) => {
       billed_to: assocBillTo,
       due_date: thirtyDaysFromNowFormatted
     })
-    await postWaterBill.save();
-    await postAssocDue.save();
+    const [waterBill, assocDue] = await Promise.all([postWaterBill.save(), postAssocDue.save()]);
+    
+    const postInvoice = new Invoice({
+      waterbill_id: waterBill.id,
+      assocdue_id: assocDue.id,
+      unit_no: unit_num,
+      invoice_date: todayFormatted,
+      due_date: thirtyDaysFromNowFormatted,
+    });
+    await postInvoice.save();
+    await Unit.update(
+      { cur_read: cur_read },
+      { where: { unit_no: unit_num } }
+    );
+    
     res.json({ message: "Service Added Succesfully" });
     console.log(postAssocDue);
     console.log(postWaterBill);
@@ -174,4 +179,25 @@ router.post("/getAllAssocDue", async (req, res) => {
   const listOfAssocDue = await AssocDue.findAll();
   res.json(listOfAssocDue);
 });
+
+// Get Invoice by Unit
+router.post("/unitInvoiceData/:unit_no", async (req, res) => {
+  const unitNum = req.params.unit_no;
+  try {
+    const invoiceByUnit = await Invoice.findOne({
+      where: { unit_no: unitNum },
+      include: [
+        { model: WaterBill },
+        { model: AssocDue },
+      ],
+    }).catch((err) => {
+      console.log(err);
+    });
+    res.json(invoiceByUnit);
+  } catch (error) {
+    console.log(error)
+  }
+});
+
+
 module.exports = router;

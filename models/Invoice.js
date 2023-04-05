@@ -5,14 +5,10 @@ module.exports
 
 module.exports = (sequelize, DataTypes) => {
   const Invoice = sequelize.define("Invoice", {
-    invoice_no: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     unit_no: {
         type: DataTypes.STRING,
         allowNull: false,
-      },
+    },
     invoice_date: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -21,14 +17,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    total: {
-        type: DataTypes.DECIMAL(10,2),
-        allowNull: false,
-      },
   });
-  /*Invoice.associate = function(models) {
-    Invoice.belongsTo(models.WaterBill);
-    Invoice.belongsTo(models.AssocDue);
-  };*/
+  Invoice.associate = function(models) {
+    Invoice.belongsTo(models.WaterBill,{foreignKey: 'waterbill_id'});
+    Invoice.belongsTo(models.AssocDue,{foreignKey: 'assocdue_id'});
+  };
+  //sequelize.sync({alter: true})
   return Invoice;   
 };
