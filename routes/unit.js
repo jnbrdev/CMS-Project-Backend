@@ -55,6 +55,18 @@ router.post("/addUnit", async (req, res) => {
     }
 
     const userId = unitOwnerName.id;*/
+    //Add  Balance
+    const postBal = new Balance({
+        unit_no: unit_no,
+        total: 0,
+        thirty_days: 0,
+        sixty_days: 0,
+        ninety_days: 0,
+    })
+
+    
+
+
     const postUnit = new Unit({
       unit_no,
       unit_owner,
@@ -65,6 +77,7 @@ router.post("/addUnit", async (req, res) => {
       status,
     });
     await postUnit.save();
+    await postBal.save();
     res.json({ message: "Unit Added Succesfully" });
     console.log(postUnit);
   } catch (err) {}

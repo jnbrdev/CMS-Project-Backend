@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATEONLY,
         allowNull: true,
       },
+      rate: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     amount: {
         type: DataTypes.DECIMAL(10,2),
         allowNull: false,

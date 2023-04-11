@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Users } = require("../models");
+const { Users, Balance } = require("../models");
 const bcrypt = require("bcryptjs");
 const { Sequelize } = require('sequelize');
 const { Op } = require('sequelize');
@@ -103,6 +103,8 @@ router.post("/addUser", async (req, res) => {
       }
       lastInvoiceNumber++; // Increment the invoice number
       formattedInvoiceNumber = `INV${lastInvoiceNumber.toString().padStart(3, "0")}`;
+
+      
     }
 
     // Map the role number to the corresponding name

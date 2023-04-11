@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { WaterBill, Invoice, AssocDue, Unit, Users, Rate } = require("../models");
-
+const { WaterBill, Invoice, AssocDue, Unit, Users, Rate, Balance } = require("../models");
+const Decimal = require('decimal.js');
 
 
 // Get Data Unit
@@ -22,7 +22,7 @@ router.post("/getUnitRateData/:unit_no", async (req, res) => {
       });
   
       if (!units) {
-        return res.status(404).send('User not found');
+        return res.status(404).send('No Water Bill Data Found');
       }
       userFullNameWaterBill = units.waterBillTo; // assign the user id data to the userID variable
 
@@ -33,7 +33,7 @@ router.post("/getUnitRateData/:unit_no", async (req, res) => {
       });
   
       if (!userWaterBillInvoice) {
-        return res.status(404).send('sUser not found');
+        return res.status(404).send('No Water Bill invoice Found');
       }
       userInvoiceWaterBill = userWaterBillInvoice.invoice_no //Assign the user invoice number to the userInvoice variable
 
@@ -44,7 +44,7 @@ router.post("/getUnitRateData/:unit_no", async (req, res) => {
       });
   
       if (!unitAssoc) {
-        return res.status(404).send('assocUser not found');
+        return res.status(404).send('No Association Due invoice found');
       }
       userFullNameAssocDue = unitAssoc.assocBillTo; // assign the user id data to the userID variable
 
@@ -122,6 +122,8 @@ router.post("/addBill", async (req, res) => {
     cur_read,
     waterBillTotal,
     assocDueTotal,
+    ratePerSqm,
+    ratePerCubic,
     reading_date} = req.body;
   try {
     const today = new Date(); // Today's date
@@ -135,6 +137,7 @@ router.post("/addBill", async (req, res) => {
       prev_read: previous_reading,
       cur_read: cur_read,
       reading_date: reading_date,
+      rate: ratePerCubic,
       amount: waterBillTotal,
       invoice_no: invoiceWaterBillTo,
       billed_to: waterBillTo,
@@ -143,29 +146,54 @@ router.post("/addBill", async (req, res) => {
     const postAssocDue = new AssocDue({
       unit_no: unit_num,
       amount: assocDueTotal,
+      rate: ratePerSqm,
       invoice_no: invoiceAssocBillTo,
       billed_to: assocBillTo,
       due_date: thirtyDaysFromNowFormatted
     })
     const [waterBill, assocDue] = await Promise.all([postWaterBill.save(), postAssocDue.save()]);
     
-    const postInvoice = new Invoice({
-      waterbill_id: waterBill.id,
-      assocdue_id: assocDue.id,
-      unit_no: unit_num,
-      invoice_date: todayFormatted,
-      due_date: thirtyDaysFromNowFormatted,
-    });
-    await postInvoice.save();
-    await Unit.update(
-      { cur_read: cur_read },
-      { where: { unit_no: unit_num } }
-    );
+    //Balance
+     // Fetch the current data from the balance table
+    const currentBalance = await Balance.findOne({ where: { unit_no: unit_num } });
     
-    res.json({ message: "Service Added Succesfully" });
-    console.log(postAssocDue);
-    console.log(postWaterBill);
-  } catch (err) {console.log(err)}
+    // Calculate the new values for the balance table
+    const waterBillTot = new Decimal(waterBillTotal);
+    const assocDueTot = new Decimal(assocDueTotal);
+
+    const newCurrent = waterBillTot.plus(assocDueTot);
+    const thirtyDays = new Decimal(currentBalance.current);
+    const sixtyDays = new Decimal(currentBalance.thirty_days);
+    const ninetyDays = new Decimal(currentBalance.ninety_days).plus(currentBalance.sixty_days);
+    const total = newCurrent.plus(thirtyDays).plus(sixtyDays).plus(ninetyDays);
+
+    // Update the balance table with the new values
+    await Balance.update({
+      current: newCurrent.toNumber(),
+      thirty_days: thirtyDays.toNumber(),
+      sixty_days: sixtyDays.toNumber(),
+      ninety_days: ninetyDays.toNumber(),
+      total: total.toNumber()
+    }, { where: { unit_no: unit_num } });
+
+      //Add Invoice
+      const postInvoice = new Invoice({
+        waterbill_id: waterBill.id,
+        assocdue_id: assocDue.id,
+        unit_no: unit_num,
+        invoice_date: todayFormatted,
+        due_date: thirtyDaysFromNowFormatted,
+      });
+      await postInvoice.save();
+      await Unit.update(
+        { cur_read: cur_read },
+        { where: { unit_no: unit_num } }
+      );
+      
+      res.json({ message: "Service Added Succesfully" });
+      console.log(postAssocDue);
+      console.log(postWaterBill);
+    } catch (err) {console.log(err)}
 });
 
 // Get All WaterBill
@@ -193,7 +221,46 @@ router.post("/unitInvoiceData/:unit_no", async (req, res) => {
     }).catch((err) => {
       console.log(err);
     });
-    res.json(invoiceByUnit);
+
+    //Total Charges Calculation
+    const waterBillAmount = invoiceByUnit.WaterBill ? new Decimal(invoiceByUnit.WaterBill.amount) : new Decimal(0);
+    const assocDueAmount = invoiceByUnit.AssocDue ? new Decimal(invoiceByUnit.AssocDue.amount) : new Decimal(0);
+
+    const totalCharges = waterBillAmount.plus(assocDueAmount).toFixed(2);
+
+    const waterBillData = {
+      description: "**WATER BILL**" 
+      + "\nReading Date: "+ invoiceByUnit.WaterBill.reading_date 
+      +"\nRate: " + invoiceByUnit.WaterBill.rate 
+      +"\nPrev. Reading: " + invoiceByUnit.WaterBill.prev_read 
+      + "\nCurrent Reading: " + invoiceByUnit.WaterBill.cur_read
+      +"\nBill to: " + invoiceByUnit.WaterBill.billed_to,
+      readDate: invoiceByUnit.WaterBill.reading_date, 
+      invoiceID: invoiceByUnit.WaterBill.invoice_no,
+      amount: invoiceByUnit.WaterBill.amount,
+      dueDate: invoiceByUnit.WaterBill.due_date
+    } 
+
+    const assocDueData = {
+      invoice_no: invoiceByUnit.AssocDue.invoice_no,
+      description: "**ASSOCIATION DUES**" 
+      + "\nMonthly Assoc. Due: " + invoiceByUnit.AssocDue.amount
+      + "\nBill to: " + invoiceByUnit.AssocDue.billed_to
+      + "\nRate: " + invoiceByUnit.AssocDue.rate,
+      rate: invoiceByUnit.AssocDue.rate,
+      billed_to: invoiceByUnit.AssocDue.billed_to,
+      amount: invoiceByUnit.AssocDue.amount,
+      due_date: invoiceByUnit.AssocDue.due_date,
+    }
+
+
+    res.json([{
+      unit_no: invoiceByUnit.unit_no,
+      totalCharges: totalCharges,
+      waterBillData,
+      assocDueData
+    }]);
+    console.log(totalCharges)
   } catch (error) {
     console.log(error)
   }
