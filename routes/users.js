@@ -134,16 +134,23 @@ router.post("/addUser", async (req, res) => {
 //Login User
 
 // Update User
-router.put("/updateUser/:id", async (req, res) => {
-  let id = req.params.id;
-  const updateUser = await Users.update(req.body, { where: { id: id } });
-  res.json(updateUser);
+router.put("/updateUser/:email", async (req, res) => {
+  try {
+    const emails = req.params.email;
+    const getOneUser = await Users.findOne({ where: { email: emails } });
+    const userID = getOneUser.id
+    const updateUser = await Users.update(req.body, { where: { id: userID } });
+    res.json(updateUser);
+    console.log(req.body, emails)
+  } catch (error) {
+    console.log(error)
+  }
 });
 
 // Delete User
-router.delete("/deleteUser/:id", async (req, res) => {
-  let id = req.params.id;
-  const delUser = await Users.destroy({ where: { id: id } });
+router.delete("/deleteUser/:email", async (req, res) => {
+  let email = req.params.email;
+  const delUser = await Users.destroy({ where: { email: email } });
   res.json(delUser);
 });
 

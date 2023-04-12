@@ -218,6 +218,13 @@ router.post("/unitInvoiceData/:unit_no", async (req, res) => {
         { model: WaterBill },
         { model: AssocDue },
       ],
+      order: [['createdAt', 'DESC']] 
+    }).catch((err) => {
+      console.log(err);
+    });
+
+    const unitAccAging = await Balance.findOne({
+      where: {unit_no: unitNum}
     }).catch((err) => {
       console.log(err);
     });
@@ -225,8 +232,9 @@ router.post("/unitInvoiceData/:unit_no", async (req, res) => {
     //Total Charges Calculation
     const waterBillAmount = invoiceByUnit.WaterBill ? new Decimal(invoiceByUnit.WaterBill.amount) : new Decimal(0);
     const assocDueAmount = invoiceByUnit.AssocDue ? new Decimal(invoiceByUnit.AssocDue.amount) : new Decimal(0);
-
     const totalCharges = waterBillAmount.plus(assocDueAmount).toFixed(2);
+
+    
 
     const waterBillData = {
       description: "**WATER BILL**" 
@@ -253,12 +261,21 @@ router.post("/unitInvoiceData/:unit_no", async (req, res) => {
       due_date: invoiceByUnit.AssocDue.due_date,
     }
 
+    const accAgingData = {
+      current: unitAccAging.current,
+      thirty_days: unitAccAging.thirty_days,
+      sixty_days: unitAccAging.sixty_days,
+      ninety_days: unitAccAging.ninety_days,
+      total: unitAccAging.total
+    }
+
 
     res.json([{
       unit_no: invoiceByUnit.unit_no,
       totalCharges: totalCharges,
       waterBillData,
-      assocDueData
+      assocDueData,
+      accAgingData
     }]);
     console.log(totalCharges)
   } catch (error) {
