@@ -88,8 +88,8 @@ router.put("/updateUnit/:unitNo", async (req, res) => {
   
   try {
     const unit_no = req.params.unitNo;
-  const updateUnit = await Unit.update(req.body, { where: { unit_no: unit_no } });
-  res.json(updateUnit);
+    const updateUnit = await Unit.update(req.body, { where: { unit_no: unit_no } });
+    res.json(updateUnit);
   
   } catch (error) {
     res.json(error)

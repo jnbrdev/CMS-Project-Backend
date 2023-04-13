@@ -77,6 +77,9 @@ router.post("/addUser", async (req, res) => {
     birthdate,
     role,
     status,
+    address,
+    age,
+    gender
   } = req.body;
   const encryptedPassword = await bcrypt.hash(password, 10);
   try {
@@ -117,6 +120,9 @@ router.post("/addUser", async (req, res) => {
       full_name,
       contact_no,
       birthdate,
+      gender,
+      address,
+      age,
       role: roleName, // Use the mapped role name instead of the role number
       status,
       invoice_no: formattedInvoiceNumber,
@@ -137,15 +143,15 @@ router.post("/addUser", async (req, res) => {
 router.put("/updateUser/:email", async (req, res) => {
   try {
     const emails = req.params.email;
-    const getOneUser = await Users.findOne({ where: { email: emails } });
-    const userID = getOneUser.id
-    const updateUser = await Users.update(req.body, { where: { id: userID } });
+    const updateUser = await Users.update(req.body, { where: { email: emails } });
     res.json(updateUser);
-    console.log(req.body, emails)
+    console.log(req.body.rate)
   } catch (error) {
-    console.log(error)
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Delete User
 router.delete("/deleteUser/:email", async (req, res) => {

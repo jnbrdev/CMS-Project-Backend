@@ -24,4 +24,18 @@ router.post("/addService", async (req, res) => {
   } catch (err) {console.log(err)}
 });
 
+// Update Service
+router.put("/updateService/:serviceName", async (req, res) => {
+  try {
+    const servicesName = req.params.serviceName;
+    const updatedService = await Service.update(req.body, { where: { service_name: servicesName } });
+    res.json(updatedService);
+    console.log(req.body.rate)
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 module.exports = router;
