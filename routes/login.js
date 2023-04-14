@@ -19,7 +19,7 @@ router.post("/loginUser", async (req, res) => {
     if (!(await bcrypt.compare(password, loginUserWithEmail.password))) {
       res.json({ message: "Wrong Password" });
     }
-    const jwtToken = jwt.sign(
+    const accessToken = jwt.sign(
       {
         id: loginUserWithEmail.id,
         email: loginUserWithEmail.email,
@@ -48,7 +48,7 @@ router.post("/loginUser", async (req, res) => {
       email: email,
       role: roles,
       status: loginUserWithEmail.status,
-      accessToken: jwtToken,
+      accessToken: accessToken,
       refreshToken: refToken,
     });
   } catch (error) {
