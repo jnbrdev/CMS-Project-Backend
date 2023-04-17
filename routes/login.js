@@ -37,7 +37,8 @@ router.post("/loginUser", async (req, res) => {
       process.env.JWT_SECRET_REFRESH
     );
 
-    const roles = Object.values(loginUserWithEmail.role);
+    //const roles = Object.values(loginUserWithEmail.role);
+    const roles = loginUserWithEmail.role;
     res.cookie("jwt", refToken, {
       httpOnly: true,
       sameSite: "None",
