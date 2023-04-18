@@ -141,7 +141,8 @@ router.post("/addBill", async (req, res) => {
       amount: waterBillTotal,
       invoice_no: invoiceWaterBillTo,
       billed_to: waterBillTo,
-      due_date: thirtyDaysFromNowFormatted
+      due_date: thirtyDaysFromNowFormatted,
+      status: "Unpaid"
     });
     const postAssocDue = new AssocDue({
       unit_no: unit_num,
@@ -149,7 +150,8 @@ router.post("/addBill", async (req, res) => {
       rate: ratePerSqm,
       invoice_no: invoiceAssocBillTo,
       billed_to: assocBillTo,
-      due_date: thirtyDaysFromNowFormatted
+      due_date: thirtyDaysFromNowFormatted,
+      status: "Unpaid"
     })
     const [waterBill, assocDue] = await Promise.all([postWaterBill.save(), postAssocDue.save()]);
     

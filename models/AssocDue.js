@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATEONLY,
       allowNull: true,
     },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   });
   AssocDue.associate = function(models) {
     AssocDue.hasMany(models.Invoice,{foreignKey: 'assocdue_id'});
