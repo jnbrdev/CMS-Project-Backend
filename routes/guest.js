@@ -20,7 +20,7 @@ router.post("/addGuest", async (req, res) => {
       const lastGuest = await Guest.findOne({
           order: [["createdAt", "DESC"]],
       });
-      let lastGuestNumber = lastGuest ? parseInt(lastGuest.guest_no.slice(3), 10) : 0;
+      let lastGuestNumber = lastGuest ? parseInt(lastGuest.guest_no.slice(5), 10) : 0;
       lastGuestNumber++; // Increment the invoice number
       const formattedGuestNumber = `GUEST${lastGuestNumber.toString().padStart(3, "0")}`;
       const postGuestShift = new Guest({
@@ -37,6 +37,17 @@ router.post("/addGuest", async (req, res) => {
       console.log(postGuestShift);
     } catch (err) {
       console.log(err);
+    }
+  });
+
+  //Delete Guest
+  router.delete("/delGuest/:guestNum", async (req, res) => {
+    const gNum = req.params.guestNum;
+    const delGuests = await Guest.destroy({ where: { guest_no: gNum } });
+    if (delGuests) {
+      res.json({ message: `Guest ${gNum} was deleted successfully.` });
+    } else {
+      res.status(404).json({ message: `Guest ${gNum} not found.` });
     }
   });
 module.exports = router;

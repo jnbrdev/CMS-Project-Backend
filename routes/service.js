@@ -37,5 +37,17 @@ router.put("/updateService/:serviceName", async (req, res) => {
   }
 });
 
+//Delete
+router.delete("/delService/:serviceName", async (req, res) => {
+  const servName = req.params.serviceName;
+  const delService = await Service.destroy({ where: { service_name: servName } });
+  if (delService) {
+    res.json({ message: `Service ${servName} was deleted successfully.` });
+  } else {
+    res.status(404).json({ message: `Service ${servName} not found.` });
+  }
+});
+
+
 
 module.exports = router;
