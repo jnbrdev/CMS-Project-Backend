@@ -10,6 +10,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    unit_no: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    acc_balance: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,

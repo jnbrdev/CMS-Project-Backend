@@ -131,9 +131,23 @@ router.post("/addBill", async (req, res) => {
 
     const todayFormatted = today.toISOString().slice(0, 10);
     const thirtyDaysFromNowFormatted = thirtyDaysFromNow.toISOString().slice(0, 10);
-  
+
+    //Auto-Increment Transaction Number Water Bill
+    let formattedTransNumber = null;
+    const lastTransactionNumberWaterBill = await WaterBill.findOne({
+      order: [["createdAt", "DESC"]],
+    });
+    let lastWaterBillTransactionNumber = 0;
+    if (lastTransactionNumberWaterBill?.trans_no) {
+      lastWaterBillTransactionNumber = parseInt(lastTransactionNumberWaterBill.trans_no.slice(3), 10);
+    }
+    lastWaterBillTransactionNumber++; // Increment the transaction Number
+    formattedTransNumber = `WTR${lastWaterBillTransactionNumber.toString().padStart(3, "0")}`;
+    // ADD WATER BILL
+    const waterBillType = "Water Bill"
     const postWaterBill = new WaterBill({
       unit_no: unit_num,
+      trans_no: formattedTransNumber,
       prev_read: previous_reading,
       cur_read: cur_read,
       reading_date: reading_date,
@@ -142,16 +156,32 @@ router.post("/addBill", async (req, res) => {
       invoice_no: invoiceWaterBillTo,
       billed_to: waterBillTo,
       due_date: thirtyDaysFromNowFormatted,
-      status: "Unpaid"
+      status: "Unpaid",
+      bill_type: waterBillType
     });
+    //Auto-Increment Transaction Number Water Bill
+    let formattedAssocTransNumber = null;
+    const lastTransactionNumberAssocDue = await AssocDue.findOne({
+      order: [["createdAt", "DESC"]],
+    });
+    let lastAssocDueTransactionNumber = 0;
+    if (lastTransactionNumberAssocDue?.trans_no) {
+      lastAssocDueTransactionNumber = parseInt(lastTransactionNumberAssocDue.trans_no.slice(3), 10);
+    }
+    lastAssocDueTransactionNumber++; // Increment the transaction Number
+    formattedAssocTransNumber = `ASC${lastAssocDueTransactionNumber.toString().padStart(3, "0")}`;
+    //ADD ASSOC DUE
+    const assocBillType = "Association Due"
     const postAssocDue = new AssocDue({
       unit_no: unit_num,
+      trans_no: formattedAssocTransNumber,
       amount: assocDueTotal,
       rate: ratePerSqm,
       invoice_no: invoiceAssocBillTo,
       billed_to: assocBillTo,
       due_date: thirtyDaysFromNowFormatted,
-      status: "Unpaid"
+      status: "Unpaid",
+      bill_type: assocBillType
     })
     const [waterBill, assocDue] = await Promise.all([postWaterBill.save(), postAssocDue.save()]);
     

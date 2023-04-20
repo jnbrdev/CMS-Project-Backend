@@ -107,10 +107,30 @@ router.post("/addUser", async (req, res) => {
       lastInvoiceNumber++; // Increment the invoice number
       formattedInvoiceNumber = `INV${lastInvoiceNumber.toString().padStart(3, "0")}`;
 
-      
-    }
 
-    // Map the role number to the corresponding name
+      const roleName = roles[role];
+      const acc_balance = 0
+      // Save user with the role name instead of the role number
+      const postUser = new Users({
+        email,
+        password: encryptedPassword,
+        full_name,
+        contact_no,
+        birthdate,
+        gender,
+        address,
+        acc_balance: acc_balance,
+        age,
+        role: roleName, // Use the mapped role name instead of the role number
+        status,
+        invoice_no: formattedInvoiceNumber,
+      });
+
+      await postUser.save();
+      res.json({message: "Added Successfully"});
+      
+    }else{
+       // Map the role number to the corresponding name
     const roleName = roles[role];
 
     // Save user with the role name instead of the role number
@@ -132,6 +152,9 @@ router.post("/addUser", async (req, res) => {
     res.json({message: "Added Successfully"});
     console.log(postUser);
 
+    }
+
+   
   } catch (err) {
     console.log(err)
   }

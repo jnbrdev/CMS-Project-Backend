@@ -48,6 +48,8 @@ router.post("/loginUser", async (req, res) => {
       message: "Login Successfully!",
       email: email,
       role: roles,
+      acc_balance: loginUserWithEmail.acc_balance,
+      full_name: loginUserWithEmail.full_name,
       status: loginUserWithEmail.status,
       accessToken: accessToken,
       refreshToken: refToken,

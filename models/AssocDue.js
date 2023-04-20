@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    trans_no: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     billed_to: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -26,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     due_date: {
       type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    bill_type: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
     status: {
