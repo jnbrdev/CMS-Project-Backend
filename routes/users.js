@@ -160,8 +160,6 @@ router.post("/addUser", async (req, res) => {
   }
 });
 
-//Login User
-
 // Update User
 router.put("/updateUser/:email", async (req, res) => {
   try {
@@ -175,12 +173,27 @@ router.put("/updateUser/:email", async (req, res) => {
   }
 });
 
-
 // Delete User
 router.delete("/deleteUser/:email", async (req, res) => {
   let email = req.params.email;
   const delUser = await Users.destroy({ where: { email: email } });
   res.json(delUser);
+});
+
+// Get Account Balance
+router.get('/getUserBalance/:email', async (req, res) => {
+  let email = req.params.email;
+  try {
+    const users = await Users.findOne({
+      where: {email: email},
+    });
+    const accBalance = users.acc_balance
+    res.status(200).json(accBalance);
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Internal server error');
+  }
 });
 
 module.exports = router;
