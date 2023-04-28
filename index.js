@@ -5,10 +5,13 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const dotEnv = require("dotenv").config()
 const bcrypt = require("bcryptjs")
+const cookieParser = require("cookie-parser");
+const allowedOrigins = require("./config/allowedOrigins")
 
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(allowedOrigins));
+app.use(cookieParser());
 app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
