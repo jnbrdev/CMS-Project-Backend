@@ -40,7 +40,7 @@ app.use("/guest", guestRouter);
 app.use("/billings", billingsRouter);
 
 db.sequelize.sync().then(() => {
-  app.listen(3003, () => {
+  app.listen(3002, () => {
     console.log("server running on port 3003");
   });
 });
