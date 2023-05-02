@@ -4,7 +4,7 @@ const { Users, Balance } = require("../models");
 const bcrypt = require("bcryptjs");
 const { Sequelize } = require('sequelize');
 const { Op } = require('sequelize');
-// Get All Users
+// Get All Users except Admin and Super Admin
 router.post("/getAllUser", async (req, res) => {
   const status = "Active";
   const excludedRoles = ["Super Admin", "Admin"];
@@ -19,6 +19,12 @@ router.post("/getAllUser", async (req, res) => {
     attributes: { exclude: ['password'] }
   });
   res.json(getAllUser);
+});
+
+//Get Users
+router.post("/getUsers", async (req, res) => {
+  const listOfUsers= await Users.findAll();
+  res.json(listOfUsers);
 });
 
 //Get Users
