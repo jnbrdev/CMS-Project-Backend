@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": null,
+    "password": "Condoconnect1!",
     "database": "cms_db",
     "host": "localhost",
     "dialect": "mysql"
