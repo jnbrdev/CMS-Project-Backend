@@ -3,21 +3,21 @@
     "username": "root",
     "password": "Condoconnect1!",
     "database": "cms_db",
-    "host": "localhost",
+    "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
     "password": "Condoconnect1!",
     "database": "cms_db",
-    "host": "localhost",
+    "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
     "password": "Condoconnect1!",
     "database": "cms_db",
-    "host": "localhost",
+    "host": "127.0.0.1",
     "dialect": "mysql"
   }
 }
