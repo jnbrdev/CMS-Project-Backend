@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const { Sequelize } = require('sequelize');
 const { Op } = require('sequelize');
 // Get All Users
-router.get("/getAllUser", async (req, res) => {
+router.post("/getAllUser", async (req, res) => {
   const status = "Active";
   const excludedRoles = ["Super Admin", "Admin"];
   const getAllUser = await Users.findAll({
