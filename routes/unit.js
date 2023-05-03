@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { Unit } = require("../models");
-const { Users } = require("../models");
+const { Users, Balance } = require("../models");
 
 // Get All Unit
 router.post("/getAllUnit", async (req, res) => {
@@ -33,6 +33,10 @@ router.post("/addUnit", async (req, res) => {
     unit_size,
     occupied_by,
     status,
+    waterBillTo,
+    assocBillTo,
+    meter_no,
+    currReading
   } = req.body;
   try {
     const alreadyExistUnit = await Unit.findOne({ where: { unit_no } }).catch(
@@ -64,9 +68,6 @@ router.post("/addUnit", async (req, res) => {
         ninety_days: 0,
     })
 
-    
-
-
     const postUnit = new Unit({
       unit_no,
       unit_owner,
@@ -75,12 +76,18 @@ router.post("/addUnit", async (req, res) => {
       unit_size,
       occupied_by,
       status,
+      waterBillTo,
+      assocBillTo,
+      meter_no,
+      currReading
     });
     await postUnit.save();
     await postBal.save();
     res.json({ message: "Unit Added Succesfully" });
     console.log(postUnit);
-  } catch (err) {}
+  } catch (err) {
+    console.log(err)
+  }
 });
 
 // Update Unit

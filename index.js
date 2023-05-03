@@ -10,6 +10,7 @@ const cookieParser = require("cookie-parser");
 
 const allowedOrigins = [
   'http://localhost:3002',
+  'http://localhost:3000',
   'http://localhost',  
   'http://52.63.84.156', 
   'http://52.63.84.156:3002', 
