@@ -26,7 +26,7 @@ router.post("/loginUser", async (req, res) => {
         role: loginUserWithEmail.role,
         expiresIn: "1h",
       },
-      process.env.JWT_SECRET
+      "jwt$3Cr3T%xEr$2sFah&23"
     );
     //
     const refToken = jwt.sign(
@@ -34,7 +34,7 @@ router.post("/loginUser", async (req, res) => {
         email: loginUserWithEmail.email,
         expiresIn: "1d",
       },
-      process.env.JWT_SECRET_REFRESH
+      "SDa@342jwt$3Cr3Td#@22%xEr$2sFah&23"
     );
 
     //const roles = Object.values(loginUserWithEmail.role);
