@@ -36,7 +36,7 @@ router.post("/addUnit", async (req, res) => {
     waterBillTo,
     assocBillTo,
     meter_no,
-    currReading
+    cur_read
   } = req.body;
   try {
     const alreadyExistUnit = await Unit.findOne({ where: { unit_no } }).catch(
@@ -79,7 +79,7 @@ router.post("/addUnit", async (req, res) => {
       waterBillTo,
       assocBillTo,
       meter_no,
-      currReading
+      cur_read
     });
     await postUnit.save();
     await postBal.save();
